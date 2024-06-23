@@ -3,12 +3,6 @@ import path from "path";
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
 
-export const config = {
-  api: {
-    bodyParser: false, // Deaktiver standard body parser for å håndtere filopplastinger
-  },
-};
-
 const uploadDir = path.join(process.cwd(), "public/uploads"); // Velg opplastingskatalog
 
 if (!fs.existsSync(uploadDir)) {
