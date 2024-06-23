@@ -1,72 +1,68 @@
-import OpenAI from "openai";
-import formidable from "formidable";
 import fs from "fs";
+import path from "path";
 import { NextResponse } from "next/server";
 
 export const config = {
   api: {
-    bodyParser: false,
+    bodyParser: false, // Deaktiver standard body parser for å håndtere filopplastinger
   },
 };
 
-export const POST = async (req, res) => {
-  console.log("POST request received");
+const uploadDir = path.join(process.cwd(), "public/uploads"); // Velg opplastingskatalog
+
+if (!fs.existsSync(uploadDir)) {
+  console.log("Oppretter opplastingskatalog...");
+  fs.mkdirSync(uploadDir, { recursive: true }); // Opprett katalogen hvis den ikke finnes
+  console.log("Opplastingskatalog opprettet.");
+}
+
+export async function POST(request) {
+  console.log("Mottatt POST-forespørsel");
 
   try {
-    const form = new formidable.IncomingForm();
-    console.log("IncomingForm created");
+    const formData = await request.formData();
+    const file = formData.get("image"); // Vi antar at input-feltet har navnet 'image'
 
-    // Parse incoming form data
-    form.parse(req, async (err, fields, files) => {
-      if (err) {
-        console.error("Error parsing form:", err);
-        return res.status(500).json({ message: "Error parsing the file" });
-      }
+    if (!file) {
+      console.error("Ingen fil funnet i opplastingen");
+      return NextResponse.json(
+        { error: "Ingen fil funnet i opplastingen" },
+        { status: 400 }
+      );
+    }
 
-      console.log("Form parsed successfully");
-      console.log("Fields:", fields);
-      console.log("Files:", files);
+    console.log("Mottatt fil:", file);
 
-      const imageFile = files.image;
-      console.log("Image file:", imageFile);
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+    const filePath = path.join(uploadDir, file.name);
 
-      try {
-        const imageData = fs.readFileSync(imageFile.path, {
-          encoding: "base64",
-        });
-        console.log("Image data read successfully");
-
-        const openai = new OpenAI({
-          apiKey: process.env.OPENAI_API_KEY,
-        });
-
-        console.log("Sending request to OpenAI...");
-
-        const response = await openai.chat.completion({
-          model: "gpt-4",
-          messages: [
-            {
-              role: "user",
-              content: "What’s in this image?",
-            },
-            {
-              role: "user",
-              content: `data:image/jpeg;base64,${imageData}`,
-            },
-          ],
-          maxTokens: 300,
-        });
-
-        console.log("OpenAI response received:", response.data);
-
-        return res.status(200).json(response.data);
-      } catch (error) {
-        console.error("Error calling OpenAI:", error);
-        return res.status(500).json({ error: error.message });
-      }
+    return new Promise((resolve, reject) => {
+      fs.writeFile(filePath, buffer, (err) => {
+        if (err) {
+          console.error("Feil ved skriving av fil:", err);
+          reject(
+            NextResponse.json(
+              { error: "Feil ved skriving av fil" },
+              { status: 500 }
+            )
+          );
+        } else {
+          console.log("Fil vellykket lastet opp og lagret.");
+          resolve(
+            NextResponse.json({
+              message: "Fil lastet opp",
+              filePath: `/uploads/${file.name}`,
+            })
+          );
+        }
+      });
     });
-  } catch (error) {
-    console.error("Error in POST handler:", error);
-    return res.status(500).json({ error: error.message });
+  } catch (err) {
+    console.error("Feil under håndtering av formdata:", err);
+    return NextResponse.json(
+      { error: "Noe gikk galt under håndtering av formdata" },
+      { status: 500 }
+    );
   }
-};
+}
