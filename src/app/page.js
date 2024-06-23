@@ -6,6 +6,8 @@ import { Input } from "@/components/ui/input";
 import Image from "next/image";
 
 export default function Component() {
+
+  
   return (
     <main className="flex-1">
       <section className="w-full py-12">

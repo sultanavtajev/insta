@@ -1,40 +1,37 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 
 export default function Component() {
-    const [image, setImage] = useState(null);
-    const [result, setResult] = useState(null);
-    const router = useRouter();
+  const [image, setImage] = useState(null);
+  const [result, setResult] = useState(null);
+  const router = useRouter();
 
-    const handleImageUpload = (event) => {
-      console.log(e); // Skriv ut hele event-objektet
-      console.log(e.target.files); // Skriv ut FileList-objektet
-      console.log(e.target.files[0]); // Skriv ut den første filen
-      
-      setImage(event.target.files[0]);
-    };
+  const handleImageUpload = (e) => {
+    console.log(e); // Skriv ut hele event-objektet
+    console.log(e.target.files); // Skriv ut FileList-objektet
+    console.log(e.target.files[0]); // Skriv ut den første filen
 
-    const handleAnalyze = async () => {
-      const formData = new FormData();
-      formData.append("image", image);
+    setImage(e.target.files[0]);
+  };
 
-      const res = await fetch("/api/analyse", {
-        method: "POST",
-        body: formData,
-      });
+  const handleAnalyze = async () => {
+    const formData = new FormData();
+    formData.append("image", image);
 
-      const data = await res.json();
-      setResult(data);
-      
-      router.push({
-        pathname: "/resultat",
-        query: { result: JSON.stringify(data) },
-      });
-    };
+    const res = await fetch("/api/analyse", {
+      method: "POST",
+      body: formData,
+    });
 
+    const data = await res.json();
+    setResult(data);
+
+    // Use router.push with a URL string
+    router.push(`/resultat?result=${encodeURIComponent(JSON.stringify(data))}`);
+  };
 
   return (
     <div className="flex flex-col items-center justify-center px-4 md:px-6 pt-7">
@@ -62,10 +59,17 @@ export default function Component() {
                   PNG, JPG, GIF opp til 10MB
                 </p>
               </div>
-              <input id="dropzone-file" type="file" className="hidden" onChange={handleImageUpload}/>
+              <input
+                id="dropzone-file"
+                type="file"
+                className="hidden"
+                onChange={handleImageUpload}
+              />
             </label>
           </div>
-          <Button className="w-full" onClick={handleAnalyze}>Analyser bilde </Button>
+          <Button className="w-full" onClick={handleAnalyze}>
+            Analyser bilde{" "}
+          </Button>
         </div>
       </div>
     </div>

@@ -1,17 +1,18 @@
 "use client";
 
-import { useRouter } from "next/router";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function Component() {
-  const router = useRouter();
+  const searchParams = useSearchParams();
   const [result, setResult] = useState(null);
 
   useEffect(() => {
-    if (router.query.result) {
-      setResult(JSON.parse(router.query.result));
+    const resultParam = searchParams.get("result");
+    if (resultParam) {
+      setResult(JSON.parse(resultParam));
     }
-  }, [router.query.result]);
+  }, [searchParams]);
 
   return (
     <div className="max-w-6xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
