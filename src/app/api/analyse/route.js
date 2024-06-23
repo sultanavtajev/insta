@@ -3,21 +3,21 @@ import path from "path";
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
 
-export const runtime = 'nodejs'; // Angir at denne ruten skal kjøre på Node.js runtime
-export const dynamic = 'force-dynamic'; // Sikrer at ruten er dynamisk
-export const revalidate = 0; // Sikrer at ruten ikke caches
+// Ny konfigurasjonsmetode ifølge dokumentasjonen
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+export const preferredRegion = "auto";
 
-const uploadDir = path.join(process.cwd(), "public/uploads"); // Velg opplastingskatalog
+const uploadDir = path.join(process.cwd(), "public/uploads");
 
 if (!fs.existsSync(uploadDir)) {
   console.log("Oppretter opplastingskatalog...");
-  fs.mkdirSync(uploadDir, { recursive: true }); // Opprett katalogen hvis den ikke finnes
+  fs.mkdirSync(uploadDir, { recursive: true });
   console.log("Opplastingskatalog opprettet.");
 }
 
-// Sett opp OpenAI-klienten
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY, // Sørg for å sette OPENAI_API_KEY i miljøvariablene dine
+  apiKey: process.env.OPENAI_API_KEY,
 });
 
 export async function POST(request) {
@@ -25,7 +25,7 @@ export async function POST(request) {
 
   try {
     const formData = await request.formData();
-    const file = formData.get("image"); // Vi antar at input-feltet har navnet 'image'
+    const file = formData.get("image");
 
     if (!file) {
       console.error("Ingen fil funnet i opplastingen");
@@ -55,7 +55,6 @@ export async function POST(request) {
           console.log("Fil vellykket lastet opp og lagret.");
 
           try {
-            // Bruk miljøvariabel for å sette baseURL når prosjektet er distribuert
             const baseUrl = process.env.BASE_URL || "http://localhost:3000";
             const imageUrl = `${baseUrl}/uploads/${file.name}`;
             console.log("Sender forespørsel til OpenAI...");
@@ -68,7 +67,7 @@ export async function POST(request) {
                   content: `Describe the contents of this image hosted at ${imageUrl}.`,
                 },
               ],
-              max_tokens: 1000,
+              max_tokens: 300,
             });
 
             console.log("OpenAI respons mottatt:", response);
