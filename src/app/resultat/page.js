@@ -1,9 +1,9 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 
-export default function Component() {
+function ResultComponent() {
   const searchParams = useSearchParams();
   const [result, setResult] = useState(null);
 
@@ -33,5 +33,13 @@ export default function Component() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function Component() {
+  return (
+    <Suspense fallback={<div>Laster siden...</div>}>
+      <ResultComponent />
+    </Suspense>
   );
 }
