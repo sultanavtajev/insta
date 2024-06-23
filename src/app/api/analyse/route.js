@@ -3,6 +3,10 @@ import path from "path";
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
 
+export const runtime = 'nodejs'; // Angir at denne ruten skal kjøre på Node.js runtime
+export const dynamic = 'force-dynamic'; // Sikrer at ruten er dynamisk
+export const revalidate = 0; // Sikrer at ruten ikke caches
+
 const uploadDir = path.join(process.cwd(), "public/uploads"); // Velg opplastingskatalog
 
 if (!fs.existsSync(uploadDir)) {
@@ -64,7 +68,7 @@ export async function POST(request) {
                   content: `Describe the contents of this image hosted at ${imageUrl}.`,
                 },
               ],
-              max_tokens: 300,
+              max_tokens: 1000,
             });
 
             console.log("OpenAI respons mottatt:", response);
