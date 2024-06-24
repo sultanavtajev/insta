@@ -14,7 +14,12 @@ function ResultComponent() {
     if (resultParam) {
       const parsedResult = JSON.parse(resultParam);
       if (parsedResult.analysis) {
-        setAnalysis(parsedResult.analysis);
+        const formattedAnalysis = parsedResult.analysis
+          .replace(/###/g, "")
+          .replace(/\*\*/g, "")
+          .replace(/\*/g, "")
+          .replace(/- /g, "• ");
+        setAnalysis(formattedAnalysis);
       } else {
         console.error("Ingen analyse funnet i resultatet");
       }
@@ -22,7 +27,6 @@ function ResultComponent() {
   }, [searchParams]);
 
   const handleNewAnalysis = () => {
-    // Naviger til opplastingssiden eller en side der brukeren kan laste opp et nytt bilde
     router.push("/lastbilder"); // Oppdater denne ruten til riktig rute for opplastingssiden
   };
 
@@ -46,11 +50,11 @@ function ResultComponent() {
               <p>Laster...</p>
             )}
           </div>
-        </div>
-        <div className="px-4 py-5 sm:px-6">
+          <div className="px-4 py-5 sm:px-6">
           <Button className="w-full" onClick={handleNewAnalysis}>
             Analyser et nytt bilde{" "}
           </Button>
+          </div>
         </div>
       </div>
     </div>

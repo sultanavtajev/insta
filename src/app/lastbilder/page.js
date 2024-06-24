@@ -6,16 +6,20 @@ import { Button } from "@/components/ui/button";
 
 export default function Component() {
   const [image, setImage] = useState(null);
-  const [result, setResult] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const handleImageUpload = (e) => {
-    console.log(e); // Skriv ut hele event-objektet
-    console.log(e.target.files); // Skriv ut FileList-objektet
-    console.log(e.target.files[0]); // Skriv ut den første filen
-
-    setImage(e.target.files[0]);
+    const file = e.target.files[0];
+    if (file) {
+      setImage(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleAnalyze = async () => {
@@ -29,7 +33,6 @@ export default function Component() {
     });
 
     const data = await res.json();
-    setResult(data);
     setLoading(false);
 
     // Use router.push with a URL string
@@ -49,26 +52,37 @@ export default function Component() {
         </div>
         <div className="bg-card rounded-lg border border-input p-6 space-y-4">
           <div className="flex items-center justify-center w-full">
-            <label
-              htmlFor="dropzone-file"
-              className="flex flex-col items-center justify-center h-48 border-2 border-dashed border-input rounded-lg cursor-pointer bg-background hover:bg-accent hover:border-accent-foreground transition-colors"
-            >
-              <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                <UploadIcon className="h-10 w-10 text-muted-foreground" />
-                <p className="mb-2 text-sm text-muted-foreground">
-                  Dra og slipp et bilde her eller klikk for å laste opp
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  PNG, JPG, GIF opp til 10MB
-                </p>
+            {imagePreview ? (
+              <div className="flex flex-col items-center justify-center">
+                <img
+                  src={imagePreview}
+                  alt="Preview"
+                  className="h-48 rounded-lg mb-4"
+                />
+                <p className="text-sm text-muted-foreground">Bildet er valgt</p>
               </div>
-              <input
-                id="dropzone-file"
-                type="file"
-                className="hidden"
-                onChange={handleImageUpload}
-              />
-            </label>
+            ) : (
+              <label
+                htmlFor="dropzone-file"
+                className="flex flex-col items-center justify-center h-48 border-2 border-dashed border-input rounded-lg cursor-pointer bg-background hover:bg-accent hover:border-accent-foreground transition-colors"
+              >
+                <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                  <UploadIcon className="h-10 w-10 text-muted-foreground" />
+                  <p className="mb-2 text-sm text-muted-foreground">
+                    Dra og slipp et bilde her eller klikk for å laste opp
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    PNG, JPG, GIF opp til 10MB
+                  </p>
+                </div>
+                <input
+                  id="dropzone-file"
+                  type="file"
+                  className="hidden"
+                  onChange={handleImageUpload}
+                />
+              </label>
+            )}
           </div>
           <Button className="w-full" onClick={handleAnalyze} disabled={loading}>
             {loading ? "Laster..." : "Analyser bilde"}
