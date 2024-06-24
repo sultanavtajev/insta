@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 export default function Component() {
   const [image, setImage] = useState(null);
   const [result, setResult] = useState(null);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const handleImageUpload = (e) => {
@@ -18,6 +19,7 @@ export default function Component() {
   };
 
   const handleAnalyze = async () => {
+    setLoading(true);
     const formData = new FormData();
     formData.append("image", image);
 
@@ -28,6 +30,7 @@ export default function Component() {
 
     const data = await res.json();
     setResult(data);
+    setLoading(false);
 
     // Use router.push with a URL string
     router.push(`/resultat?result=${encodeURIComponent(JSON.stringify(data))}`);
@@ -67,9 +70,14 @@ export default function Component() {
               />
             </label>
           </div>
-          <Button className="w-full" onClick={handleAnalyze}>
-            Analyser bilde{" "}
+          <Button className="w-full" onClick={handleAnalyze} disabled={loading}>
+            {loading ? "Laster..." : "Analyser bilde"}
           </Button>
+          {loading && (
+            <div className="fixed inset-0 flex items-center justify-center z-50 bg-background/50 backdrop-blur-sm">
+              <div className="w-12 h-12 rounded-full border-4 border-primary border-t-transparent animate-spin" />
+            </div>
+          )}
         </div>
       </div>
     </div>
