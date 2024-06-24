@@ -1,18 +1,30 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState, Suspense } from "react";
+import { Button } from "@/components/ui/button";
 
 function ResultComponent() {
   const searchParams = useSearchParams();
-  const [result, setResult] = useState(null);
+  const router = useRouter();
+  const [analysis, setAnalysis] = useState(null);
 
   useEffect(() => {
     const resultParam = searchParams.get("result");
     if (resultParam) {
-      setResult(JSON.parse(resultParam));
+      const parsedResult = JSON.parse(resultParam);
+      if (parsedResult.analysis) {
+        setAnalysis(parsedResult.analysis);
+      } else {
+        console.error("Ingen analyse funnet i resultatet");
+      }
     }
   }, [searchParams]);
+
+  const handleNewAnalysis = () => {
+    // Naviger til opplastingssiden eller en side der brukeren kan laste opp et nytt bilde
+    router.push("/lastbilder"); // Oppdater denne ruten til riktig rute for opplastingssiden
+  };
 
   return (
     <div className="max-w-6xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
@@ -24,12 +36,21 @@ function ResultComponent() {
             </h2>
           </div>
           <div className="border-t border-gray-200 dark:border-gray-700 px-4 py-5 sm:p-0">
-            {result ? (
-              <pre>{JSON.stringify(result, null, 2)}</pre>
+            {analysis ? (
+              <div className="overflow-auto max-h-[70vh] px-4 py-5">
+                <pre className="whitespace-pre-wrap break-words">
+                  {analysis}
+                </pre>
+              </div>
             ) : (
               <p>Laster...</p>
             )}
           </div>
+        </div>
+        <div className="px-4 py-5 sm:px-6">
+          <Button className="w-full" onClick={handleNewAnalysis}>
+            Analyser et nytt bilde{" "}
+          </Button>
         </div>
       </div>
     </div>
@@ -42,4 +63,4 @@ export default function Component() {
       <ResultComponent />
     </Suspense>
   );
-} 
+}
