@@ -6,8 +6,8 @@ import Footer from "@/components/footer.js";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "nexttemplate",
-  description: "nexttemplate",
+  title: "Moody Bildeanalyse",
+  description: "Analyser bilder med kunstig intelligens",
 };
 
 export default function RootLayout({ children }) {
