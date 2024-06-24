@@ -119,7 +119,7 @@ export default function Komponent() {
               </div>
             </div>
             <p className="mt-4 text-muted-foreground">
-              Jane er vår SoMe-ansvarlig. Hun har en dyp forståelse av de
+              Paolla er vår SoMe-ansvarlig. Hun har en dyp forståelse av de
               nyeste teknologiene og er ansvarlig for å drive vår markedsavdeling.
             </p>
           </div>
