@@ -11,14 +11,14 @@ export default function Footer() {
   </p>
   <nav className="sm:ml-auto flex gap-4 sm:gap-6">
     <Link
-      href="#"
+      href="/brukervilkar"
       className="text-xs hover:underline underline-offset-4"
       prefetch={false}
     >
       Brukervilkår
     </Link>
     <Link
-      href="#"
+      href="/personvern"
       className="text-xs hover:underline underline-offset-4"
       prefetch={false}
     >
