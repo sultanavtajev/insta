@@ -92,7 +92,7 @@ export default function Komponent() {
           <div className="rounded-lg bg-muted p-6 shadow-sm">
             <div className="flex items-center space-x-4">
               <Avatar>
-                <AvatarImage src="/image2.jpg" />
+                <AvatarImage src="/img3.jpg" />
                 <AvatarFallback>Sultan Avtajev</AvatarFallback>
               </Avatar>
               <div>
@@ -110,7 +110,7 @@ export default function Komponent() {
           <div className="rounded-lg bg-muted p-6 shadow-sm">
             <div className="flex items-center space-x-4">
               <Avatar>
-                <AvatarImage src="/image3.jpg" />
+                <AvatarImage src="/img3.jpg" />
                 <AvatarFallback>Paolla Avtajeva</AvatarFallback>
               </Avatar>
               <div>
